@@ -16,9 +16,9 @@ der Parameter.
 Perceptron (WURZEL)                              [gebaut]
  └─ MLP + Backpropagation                        [gebaut]
       ├─ CNN                                     [DIESES STÜCK]
-      └─ RNN                                     [nicht gebaut]
-           └─ LSTM                               [nicht gebaut]
-                └─ Attention/Transformer         [nicht gebaut]
+      └─ RNN                                     [gebaut]
+           └─ LSTM                               [gebaut]
+                └─ Attention/Transformer         [gebaut]
 ```
 
 **Ergebnis in Kürze:** Bei gleicher Kapazität ($F=H=16$) hat das CNN **211** Parameter, das MLP
@@ -144,3 +144,7 @@ streamlit run app.py
 - LeCun, Y. et al. (1989). *Backpropagation Applied to Handwritten Zip Code Recognition.*
 - LeCun, Y. et al. (1998). *Gradient-Based Learning Applied to Document Recognition.*
   Proceedings of the IEEE, 86(11), 2278–2324.
+
+---
+
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Neuronale Netze: vom Perceptron zum Transformer](https://sebastianhanisch.net/konzepte-neuronale-netze.html).

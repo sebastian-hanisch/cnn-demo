@@ -60,8 +60,8 @@ st.markdown(
     "Translationsinvarianz möglich, mit deutlich weniger Parametern."
 )
 st.caption(
-    "Stück 3 (Geschwister von RNN) der 'Neuronale Netze'-Reihe. Geplante Folgestücke "
-    "(noch nicht gebaut): RNN, LSTM, Attention/Transformer."
+    "Stück 3 (Geschwister von RNN) der 'Neuronale Netze'-Reihe. Folgestücke "
+    "(alle gebaut): RNN, LSTM, Attention/Transformer."
 )
 
 with st.expander("So funktioniert die Faltungsschicht", expanded=True):
@@ -213,7 +213,7 @@ sich strukturell auf eine dichte Schicht mit denselben (umgeformten) Gewichten.
 
 st.markdown("---")
 st.caption(
-    "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) "
-    "– Operations Research und Machine Learning. Interesse an einer maßgeschneiderten Lösung "
-    "für Ihr Unternehmen? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html)"
+    "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – "
+    "Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). "
+    "Mehr zur Reihe: [Neuronale Netze: vom Perceptron zum Transformer](https://sebastianhanisch.net/konzepte-neuronale-netze.html)."
 )
