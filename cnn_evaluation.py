@@ -23,15 +23,20 @@ class Settings:
 
 def analyse(settings: Settings) -> dict:
     """Trainiert CNN und MLP auf demselben Trainingssatz (Modus-abhängig) und
-    wertet beide auf einem zentrierten und einem verschobenen Testsatz aus."""
+    wertet beide auf einem zentrierten und einem verschobenen Testsatz aus (zentriert-Modus:
+    verschoben = nur ungesehene Positionen)."""
     train_range = (sc.center_anchor_range(settings.k) if settings.training_mode == "zentriert"
                   else sc.full_anchor_range(settings.k))
     train_ds = sc.make_dataset(settings.n_per_class, settings.seed, settings.k, train_range,
                                settings.noise)
     test_center_ds = sc.make_dataset(max(10, settings.n_per_class // 2), settings.seed + 1000,
                                      settings.k, sc.center_anchor_range(settings.k), settings.noise)
+    # "Verschoben": im zentriert-Modus NUR Positionen außerhalb des Trainingsbereichs (wirklich
+    # nie gesehen); im Kontrollgruppen-Modus gibt es keine ungesehenen Positionen -> ganzes Raster.
+    exclude = sc.center_anchor_range(settings.k) if settings.training_mode == "zentriert" else None
     test_shifted_ds = sc.make_dataset(max(10, settings.n_per_class // 2), settings.seed + 2000,
-                                      settings.k, sc.full_anchor_range(settings.k), settings.noise)
+                                      settings.k, sc.full_anchor_range(settings.k), settings.noise,
+                                      exclude_range=exclude)
 
     cnn = m.CNN(n_filters=settings.filters, kernel_size=C.STAMP, k=settings.k, seed=settings.seed)
     mlp = m.MLP(n_hidden=settings.filters, k=settings.k, seed=settings.seed)

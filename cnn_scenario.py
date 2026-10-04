@@ -35,23 +35,41 @@ def full_anchor_range(k: int) -> tuple:
     return (0, max_anchor(k))
 
 
+def _anchor_choices(anchor_range: tuple, exclude_range: tuple | None) -> list:
+    """Alle Ankerpositionen (zeile, spalte) im Bereich; mit exclude_range nur jene, die
+    NICHT in beiden Achsen im ausgeschlossenen Bereich liegen (= wirklich ungesehene Positionen)."""
+    lo, hi = anchor_range
+    choices = [(i, j) for i in range(lo, hi + 1) for j in range(lo, hi + 1)]
+    if exclude_range is not None:
+        e_lo, e_hi = exclude_range
+        choices = [(i, j) for (i, j) in choices
+                   if not (e_lo <= i <= e_hi and e_lo <= j <= e_hi)]
+    return choices
+
+
 def make_image(rng: np.random.Generator, label: int, k: int, anchor_range: tuple,
-              noise_std: float):
+              noise_std: float, exclude_range: tuple | None = None):
     img = rng.normal(0.0, noise_std, size=(k, k))
     lo, hi = anchor_range
-    ai = int(rng.integers(lo, hi + 1))
-    aj = int(rng.integers(lo, hi + 1))
+    if exclude_range is None:
+        ai = int(rng.integers(lo, hi + 1))
+        aj = int(rng.integers(lo, hi + 1))
+    else:
+        choices = _anchor_choices(anchor_range, exclude_range)
+        ai, aj = choices[int(rng.integers(0, len(choices)))]
     img[ai:ai + C.STAMP, aj:aj + C.STAMP] += SHAPES[label]
     return img
 
 
 def make_dataset(n_per_class: int, seed: int, k: int, anchor_range: tuple,
-                 noise_std: float = C.NOISE_DEFAULT) -> Dataset:
+                 noise_std: float = C.NOISE_DEFAULT, exclude_range: tuple | None = None) -> Dataset:
+    """exclude_range: Ankerbereich, der NICHT vorkommen soll (z. B. der Trainingsbereich, um
+    einen Testsatz mit ausschließlich ungesehenen Positionen zu bekommen)."""
     rng = np.random.default_rng(seed)
     Xs, ys = [], []
     for label in range(C.N_CLASSES):
         for _ in range(n_per_class):
-            Xs.append(make_image(rng, label, k, anchor_range, noise_std))
+            Xs.append(make_image(rng, label, k, anchor_range, noise_std, exclude_range))
             ys.append(label)
     X = np.array(Xs)
     y = np.array(ys)

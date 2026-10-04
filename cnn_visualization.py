@@ -21,11 +21,12 @@ def build_sample_image_figure(img: np.ndarray, label: int, title: str = ""):
 
 
 def build_accuracy_comparison_figure(cnn_center, cnn_shifted, mlp_center, mlp_shifted,
-                                     title="Genauigkeit: zentriert vs. verschoben"):
+                                     title="Genauigkeit: zentriert vs. verschoben",
+                                     shifted_label="Verschoben (nie gesehen)"):
     fig = go.Figure()
-    fig.add_trace(go.Bar(name="CNN", x=["Zentriert (Training)", "Verschoben (nie gesehen)"],
+    fig.add_trace(go.Bar(name="CNN", x=["Zentriert (Training)", shifted_label],
                          y=[cnn_center * 100, cnn_shifted * 100], marker_color=COLOR_CNN))
-    fig.add_trace(go.Bar(name="MLP", x=["Zentriert (Training)", "Verschoben (nie gesehen)"],
+    fig.add_trace(go.Bar(name="MLP", x=["Zentriert (Training)", shifted_label],
                          y=[mlp_center * 100, mlp_shifted * 100], marker_color=COLOR_MLP))
     fig.add_hline(y=100 / 3, line_dash="dot", line_color="gray",
                  annotation_text="Zufallsniveau (33%)")

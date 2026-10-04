@@ -23,7 +23,7 @@ Perceptron (WURZEL)                              [gebaut]
 
 **Ergebnis in Kürze:** Bei gleicher Kapazität ($F=H=16$) hat das CNN **211** Parameter, das MLP
 **1.667** – das 7,9-fache. Nur mit zentrierten Formen trainiert, bricht die MLP-Genauigkeit auf
-verschobenen (nie gesehenen) Positionen von 87 % auf 37 % ein (nahe dem Zufallsniveau 33 %),
+verschobenen (nie gesehenen) Positionen von 87 % auf 34 % ein (nahe dem Zufallsniveau 33 %),
 während das CNN bei 100 % auf 95 % fällt – kaum ein Abfall. Eine Kontrollgruppe (überall
 trainiert) schließt die Lücke für das MLP (45 % gegen 46 %), zeigt aber: die Aufgabe selbst wird
 dadurch nicht leichter, nur die Generalisierungslücke verschwindet.
@@ -42,7 +42,7 @@ weniger Parameter und die Fähigkeit, ein Merkmal an einer nie gesehenen Positio
 | CNN hat bei gleicher Kapazität deutlich weniger Parameter als MLP | ✅ 211 gegen 1.667 (7,9×) |
 | Gradienten-Check gegen finite Differenzen unter $10^{-8}$ | ✅ 2,20·10⁻⁹ |
 | CNN mit Kernelgröße = Bildgröße reduziert sich exakt auf eine dichte Schicht | ✅ identische Logits (`test_claim_reduction_check_is_exact`) |
-| Nur zentriert trainiert: MLP-Genauigkeit fällt auf verschobenen Positionen deutlich, CNN bleibt nahe seinem Niveau | ✅ MLP 87 %→37 %, CNN 100 %→95 % |
+| Nur zentriert trainiert: MLP-Genauigkeit fällt auf verschobenen Positionen deutlich, CNN bleibt nahe seinem Niveau | ✅ MLP 87 %→34 %, CNN 100 %→95 % |
 | ⚠️ Plan-Korrektur: erste Standardeinstellungen (η=0,05, 60 Epochen, 60 Beispiele/Klasse) zeigten nur eine schwache Lücke (MLP schon auf dem eigenen Trainingsbereich nur 60–70 % statt deutlich höher) | ⚠️ Ursache: Überanpassung an einzelne Rauschrealisierungen bei zu wenig Trainingsdaten/zu hoher Lernrate; korrigiert auf mehr Beispiele (100/Klasse), kleinere Lernrate (η=0,03) und weniger Epochen (30) – seither robust über 10 Seeds (MLP zentriert 83–94 %, nie unter 75 %) |
 
 ## Befunde (gemessen, keine Behauptungen)
@@ -59,16 +59,16 @@ weniger Parameter und die Fähigkeit, ein Merkmal an einer nie gesehenen Positio
 | Modell | Zentriert (Training) | Verschoben (nie gesehen) |
 |---|---|---|
 | CNN | 100 % | 95 % |
-| MLP | 87 % | 37 % |
+| MLP | 87 % | 34 % |
 
 **Kontrollgruppe** (Preset "Überall trainiert"): CNN bleibt bei 100 %/100 %; MLP liegt bei
 45 %/46 % – die Lücke ist geschlossen (Differenz < 1,3 Punkte), aber die absolute Genauigkeit
 bleibt niedriger als im zentrierten Fall, weil die Aufgabe selbst schwerer wird (mehr mögliche
 Positionen schon im Training).
 
-Über 10 unabhängige Seeds bleibt der Befund stabil: MLP-Genauigkeit auf verschobenen Positionen
-liegt durchgehend zwischen 36 % und 47 % (nahe dem Zufallsniveau von 33 % bei 3 Klassen), CNN
-zwischen 90 % und 100 %.
+Über 10 unabhängige Seeds (0–9, `ev.analyse` mit dem Preset) bleibt der Befund stabil:
+MLP-Genauigkeit auf verschobenen Positionen liegt zwischen 30 % und 40 % (Mittel 34 %, also
+beim Zufallsniveau von 33 % bei 3 Klassen), CNN zwischen 88 % und 97 % (Mittel 94,5 %).
 
 ## Modell und Verfahren
 
@@ -98,15 +98,24 @@ bei zu wenig Daten/zu hoher Lernrate, sichtbar an einem Verlust-Ausschlag mitten
 Korrigiert auf mehr Trainingsbeispiele, eine kleinere Lernrate und weniger Epochen – seither
 über 10 Seeds robust reproduzierbar.
 
+**Korrektur des Testsatzes "verschoben" (Orakel-Prüfung 2026-10):** Der verschobene Testsatz
+zog die Ankerposition früher aus dem **ganzen** Raster – bei $k=10$ lagen damit rund 14 % der
+"nie gesehenen" Bilder (9 von 64 Positionen) tatsächlich im Trainingsbereich. Das hob die
+MLP-Genauigkeit "verschoben" künstlich an (früher 37 % im Preset, 36–47 % über 10 Seeds). Jetzt
+enthält der verschobene Testsatz im Modus "Nur zentriert trainiert" ausschließlich Positionen
+außerhalb des Trainingsbereichs (`exclude_range`); im Kontrollmodus "Überall trainiert" gibt es
+keine ungesehenen Positionen, dort ist "verschoben" das ganze Raster (Zahlen dort unverändert).
+
 **Grenzen:** Eine Faltungsschicht, feste Filtergröße = Formgröße (kein Mehrschicht-CNN, keine
 Skalen-/Rotationsinvarianz). Kleine synthetische Rasterbilder, kein echter Bilddatensatz.
 
 ## Tests
 
-30 Tests, `python -m pytest tests/ -v`:
+36 Tests, `python -m pytest tests/ -v`:
 - `test_scenario.py` – Reproduzierbarkeit, Klassenbalance, Ankerbereiche.
 - `test_model.py` – Forward/Backward, Gradienten-Check, Korrektheits-Kette, Parameterzahl.
 - `test_evaluation.py` – Translationsinvarianz-Lücke, Kontrollgruppe, Parameterzahl-Skalierung.
+- `test_oracle_cnn.py` – unabhängige Orakel: scipy-Faltung, Complex-Step-Gradient, Lehrbuch-Adam, ungesehene Testpositionen.
 - `test_presets.py`, `test_claims.py` – jede Zahl oben nachgerechnet.
 - `test_app.py` – Streamlit `AppTest`: Presets, Regler-Extremwerte, Footer.
 

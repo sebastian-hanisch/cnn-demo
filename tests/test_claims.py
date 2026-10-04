@@ -33,7 +33,7 @@ def test_claim_preset_zentriert_accuracies():
     assert out["cnn_acc_center"] == 1.0
     assert round(out["cnn_acc_shifted"], 2) == 0.95
     assert round(out["mlp_acc_center"], 2) == 0.87
-    assert round(out["mlp_acc_shifted"], 2) == 0.37
+    assert round(out["mlp_acc_shifted"], 2) == 0.34
 
 
 def test_claim_preset_ueberall_closes_gap():

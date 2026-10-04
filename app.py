@@ -140,7 +140,10 @@ st.markdown("---")
 st.subheader("🎯 Translationsinvarianz: zentriert trainiert, wo getestet?")
 st.plotly_chart(
     viz.build_accuracy_comparison_figure(out["cnn_acc_center"], out["cnn_acc_shifted"],
-                                         out["mlp_acc_center"], out["mlp_acc_shifted"]),
+                                         out["mlp_acc_center"], out["mlp_acc_shifted"],
+                                         shifted_label=("Verschoben (nie gesehen)"
+                                                        if training_mode == "zentriert"
+                                                        else "Überall (alle im Training gesehen)")),
     key=f"acc_{training_mode}_{n_per_class}_{filters}_{eta}_{epochs}_{noise}_{k}_{seed}",
     use_container_width=True,
 )
