@@ -43,7 +43,7 @@ weniger Parameter und die Fähigkeit, ein Merkmal an einer nie gesehenen Positio
 | Gradienten-Check gegen finite Differenzen unter $10^{-8}$ | ✅ 2,20·10⁻⁹ |
 | CNN mit Kernelgröße = Bildgröße reduziert sich exakt auf eine dichte Schicht | ✅ identische Logits (`test_claim_reduction_check_is_exact`) |
 | Nur zentriert trainiert: MLP-Genauigkeit fällt auf verschobenen Positionen deutlich, CNN bleibt nahe seinem Niveau | ✅ MLP 87 %→34 %, CNN 100 %→95 % |
-| ⚠️ Plan-Korrektur: erste Standardeinstellungen (η=0,05, 60 Epochen, 60 Beispiele/Klasse) zeigten nur eine schwache Lücke (MLP schon auf dem eigenen Trainingsbereich nur 60–70 % statt deutlich höher) | ⚠️ Ursache: Überanpassung an einzelne Rauschrealisierungen bei zu wenig Trainingsdaten/zu hoher Lernrate; korrigiert auf mehr Beispiele (100/Klasse), kleinere Lernrate (η=0,03) und weniger Epochen (30) – seither robust über 10 Seeds (MLP zentriert 83–94 %, nie unter 75 %) |
+| ⚠️ Plan-Korrektur: erste Standardeinstellungen (η=0,05, 60 Epochen, 60 Beispiele/Klasse) zeigten nur eine schwache Lücke (MLP schon auf dem eigenen Trainingsbereich nur 60–70 % statt deutlich höher) | ⚠️ Ursache: Overfitting an einzelne Rauschrealisierungen bei zu wenig Trainingsdaten/zu hoher Lernrate; korrigiert auf mehr Beispiele (100/Klasse), kleinere Lernrate (η=0,03) und weniger Epochen (30) – seither robust über 10 Seeds (MLP zentriert 83–94 %, nie unter 75 %) |
 
 ## Befunde (gemessen, keine Behauptungen)
 
@@ -93,7 +93,7 @@ Epochen und Seed in der Sidebar; drei Beispielbilder (eines je Form); ein Genaui
 
 **Echte Plan-Korrektur (siehe Vorab-Hypothesen):** Die ursprünglichen Standardwerte zeigten eine
 schwächere, weniger überzeugende Lücke, weil das MLP schon auf seiner eigenen
-Trainingsverteilung nur mittelmäßig abschnitt (Überanpassung an einzelne Rauschrealisierungen
+Trainingsverteilung nur mittelmäßig abschnitt (Overfitting an einzelne Rauschrealisierungen
 bei zu wenig Daten/zu hoher Lernrate, sichtbar an einem Verlust-Ausschlag mitten im Training).
 Korrigiert auf mehr Trainingsbeispiele, eine kleinere Lernrate und weniger Epochen – seither
 über 10 Seeds robust reproduzierbar.
